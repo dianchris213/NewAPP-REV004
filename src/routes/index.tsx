@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { TransactionList } from "@/components/TransactionList";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { formatIDR, useApp } from "@/lib/app-store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,6 +62,20 @@ function Home() {
   const openAll = useCallback(() => setAllOpen(true), []);
   const closeAll = useCallback(() => setAllOpen(false), []);
   const openAddTx = useCallback(() => setAddTxOpen(true), [setAddTxOpen]);
+  const copyBalance = useCallback(async () => {
+    const text = `Rp.${Math.abs(Math.round(balance)).toLocaleString("id-ID")}`;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      el.remove();
+    }
+    toast.success("Saldo disalin");
+  }, [balance]);
 
   return (
     <AppShell topBar={<TopBar eyebrow="Selamat datang" title={user?.name ?? "Pengguna"} />}>
@@ -68,6 +83,14 @@ function Home() {
         <span className="text-label uppercase text-primary/80">Total Saldo</span>
         <div className="mt-2 flex items-end gap-2">
           <span className="text-display text-on-surface">{formatIDR(balance)}</span>
+          <button
+            type="button"
+            onClick={copyBalance}
+            aria-label="Salin saldo"
+            className="mb-1 flex h-8 w-8 items-center justify-center rounded-full border border-outline-variant/30 text-on-surface-variant transition-transform active:scale-90"
+          >
+            <Icon name="content_copy" className="text-[16px]" />
+          </button>
           <Icon name="chevron_right" className="mb-1 text-[22px] text-primary" />
         </div>
         <div className="mt-6 grid grid-cols-2 gap-2 sm:gap-3">
