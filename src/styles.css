@@ -174,8 +174,7 @@
   overscroll-behavior-x: contain;
   overscroll-behavior-y: auto;
   scroll-snap-type: x proximity;
-  scroll-behavior: smooth;
-  scroll-padding-left: 4px;
+  scroll-padding-inline: 4px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   scrollbar-gutter: stable;
