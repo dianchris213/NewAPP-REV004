@@ -329,6 +329,22 @@
     border-color: var(--color-border);
   }
 
+  /* Hide global scrollbars (native app look) while keeping scroll working */
+  html,
+  body,
+  main {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  main::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-on-background);
