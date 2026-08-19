@@ -111,7 +111,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
           settings?: Settings;
         };
         setUser(parsed.user ?? null);
-        setTransactions(parsed.transactions?.length ? parsed.transactions : seedTransactions());
+        if (parsed.transactions?.length) {
+          // Keep existing data; only add the mock note transaction if missing.
+          const mock = seedTransactions().find((t) => t.id === "s9")!;
+          const hasMock = parsed.transactions.some((t) => t.id === "s9");
+          setTransactions(hasMock ? parsed.transactions : [mock, ...parsed.transactions]);
+        } else {
+          setTransactions(seedTransactions());
+        }
         setSettings({ ...defaultSettings, ...(parsed.settings ?? {}) });
       } else {
         setTransactions(seedTransactions());
