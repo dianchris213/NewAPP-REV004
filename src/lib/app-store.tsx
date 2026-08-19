@@ -69,6 +69,8 @@ const seedTransactions = (): Transaction[] => {
     mk("s6", "expense", 890000, "Belanja", "Sepatu lari", 40),
     mk("s7", "expense", 250000, "Hiburan", "Langganan streaming", 120),
     mk("s8", "income", 2000000, "Bonus", "Bonus kuartal", 200),
+    // Mock test transaction with a short note (Catatan Singkat)
+    mk("s9", "expense", 75000, "Makanan", "Catatan singkat: makan siang tim di kantor", 1),
   ];
 };
 
