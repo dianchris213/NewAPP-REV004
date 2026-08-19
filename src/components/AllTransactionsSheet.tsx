@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "./Icon";
 import { TransactionList } from "./TransactionList";
 import { EmptyState } from "./EmptyState";
@@ -62,9 +63,9 @@ export function AllTransactionsSheet({
     [items, month, type, category],
   );
 
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[120] flex flex-col bg-background"
       role="dialog"
@@ -124,7 +125,8 @@ export function AllTransactionsSheet({
           <EmptyState icon="receipt" title="Tidak ada transaksi" />
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
