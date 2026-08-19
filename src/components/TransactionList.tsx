@@ -22,9 +22,11 @@ const TransactionRow = memo(function TransactionRow({ t }: { t: Transaction }) {
       </span>
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-body font-medium text-on-surface">{t.category}</span>
-        <span className="truncate text-meta text-on-surface-variant/80">
-          {t.note ||
-            new Date(t.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+        {t.note ? (
+          <span className="truncate text-meta text-on-surface-variant">{t.note}</span>
+        ) : null}
+        <span className="truncate text-meta text-on-surface-variant/60">
+          {new Date(t.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
           {t.pending ? " · menyimpan..." : ""}
         </span>
       </div>
