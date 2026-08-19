@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "./Icon";
 import { TransactionList } from "./TransactionList";
 import { EmptyState } from "./EmptyState";
-import { type Transaction } from "@/lib/app-store";
+import { useApp, type Transaction } from "@/lib/app-store";
 
 const MONTHS = [
   "Januari",
@@ -34,9 +34,9 @@ export function AllTransactionsSheet({
   onClose: () => void;
   items: Transaction[];
 }) {
-  const [month, setMonth] = useState("all");
-  const [type, setType] = useState<"all" | "income" | "expense">("all");
-  const [category, setCategory] = useState("all");
+  // Filters live in the app store so selections persist across open/close.
+  const { txFilters, setTxFilters } = useApp();
+  const { month, type, category, keyword } = txFilters;
 
   useEffect(() => {
     if (!open) return;
@@ -58,9 +58,14 @@ export function AllTransactionsSheet({
         if (type !== "all" && t.type !== type) return false;
         if (category !== "all" && t.category !== category) return false;
         if (month !== "all" && String(new Date(t.date).getMonth()) !== month) return false;
+        const q = keyword.trim().toLowerCase();
+        if (q) {
+          const haystack = `${t.category} ${t.note ?? ""}`.toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
         return true;
       }),
-    [items, month, type, category],
+    [items, month, type, category, keyword],
   );
 
   if (!open || typeof document === "undefined") return null;
@@ -91,7 +96,7 @@ export function AllTransactionsSheet({
         <FilterSelect
           label="Bulan"
           value={month}
-          onChange={setMonth}
+          onChange={(v) => setTxFilters({ month: v })}
           options={[
             { value: "all", label: "Semua Bulan" },
             ...MONTHS.map((m, i) => ({ value: String(i), label: m })),
@@ -100,7 +105,7 @@ export function AllTransactionsSheet({
         <FilterSelect
           label="Jenis"
           value={type}
-          onChange={(v) => setType(v as "all" | "income" | "expense")}
+          onChange={(v) => setTxFilters({ type: v as "all" | "income" | "expense" })}
           options={[
             { value: "all", label: "Semua Jenis" },
             { value: "income", label: "Pemasukan" },
@@ -110,12 +115,29 @@ export function AllTransactionsSheet({
         <FilterSelect
           label="Kategori"
           value={category}
-          onChange={setCategory}
+          onChange={(v) => setTxFilters({ category: v })}
           options={[
             { value: "all", label: "Semua Kategori" },
             ...categories.map((c) => ({ value: c, label: c })),
           ]}
         />
+      </div>
+
+      <div className="px-margin-main pb-3">
+        <div className="relative">
+          <Icon
+            name="search"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant/70"
+          />
+          <input
+            type="search"
+            value={keyword}
+            onChange={(e) => setTxFilters({ keyword: e.target.value })}
+            placeholder="Cari kategori atau catatan..."
+            aria-label="Cari transaksi"
+            className="h-11 w-full rounded-full border border-outline-variant/30 bg-surface-container-high pl-10 pr-4 text-[13px] text-on-surface outline-none placeholder:text-on-surface-variant/60 focus-visible:ring-2 focus-visible:ring-primary/60"
+          />
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-margin-main pb-10">

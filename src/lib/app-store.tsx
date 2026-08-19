@@ -26,6 +26,20 @@ export type User = {
   provider: "telegram" | "google";
 };
 
+export type TxFilters = {
+  month: string;
+  type: "all" | "income" | "expense";
+  category: string;
+  keyword: string;
+};
+
+export const defaultTxFilters: TxFilters = {
+  month: "all",
+  type: "all",
+  category: "all",
+  keyword: "",
+};
+
 export type Settings = {
   darkTheme: boolean;
   pushNotifications: boolean;
@@ -81,6 +95,8 @@ type AppState = {
   transactions: Transaction[];
   settings: Settings;
   addTxOpen: boolean;
+  txFilters: TxFilters;
+  setTxFilters: (update: Partial<TxFilters>) => void;
   login: (provider: "telegram" | "google", name?: string) => Promise<void>;
   logout: () => void;
   addTransaction: (input: Omit<Transaction, "id" | "date" | "pending">) => void;
@@ -100,6 +116,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [addTxOpen, setAddTxOpen] = useState(false);
+  const [txFilters, setTxFiltersState] = useState<TxFilters>(defaultTxFilters);
+
+  const setTxFilters = useCallback((update: Partial<TxFilters>) => {
+    setTxFiltersState((prev) => ({ ...prev, ...update }));
+  }, []);
 
   useEffect(() => {
     try {
@@ -217,6 +238,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       transactions,
       settings,
       addTxOpen,
+      txFilters,
+      setTxFilters,
       login,
       logout,
       addTransaction,
@@ -233,6 +256,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       transactions,
       settings,
       addTxOpen,
+      txFilters,
+      setTxFilters,
       login,
       logout,
       addTransaction,

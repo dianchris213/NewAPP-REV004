@@ -174,10 +174,9 @@
   overscroll-behavior-x: contain;
   overscroll-behavior-y: auto;
   scroll-snap-type: x proximity;
+  scroll-padding-inline: 4px;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  /* keep compositing cheap on narrow/low-end devices */
-  will-change: scroll-position;
   scrollbar-gutter: stable;
   &::-webkit-scrollbar {
     display: none;

@@ -216,8 +216,7 @@ function Home() {
 
 /**
  * Wallet card inside the horizontal swipe strip.
- * Memoized so swiping/scrolling never re-renders the whole strip, and the
- * nested action buttons stop propagation so taps never turn into a swipe.
+ * Memoized so swiping/scrolling never re-renders the whole strip.
  */
 const PocketCard = memo(function PocketCard({
   name,
@@ -230,49 +229,23 @@ const PocketCard = memo(function PocketCard({
   amount: number;
   onOpen: () => void;
 }) {
-  const stop = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      onOpen();
-    },
-    [onOpen],
-  );
-
   return (
     <div
       role="listitem"
-      className="glass-card relative min-w-[150px] shrink-0 rounded-[18px] p-4 text-left"
+      className="glass-card relative min-w-[150px] shrink-0 rounded-[18px] p-4 text-center"
     >
       <button
         type="button"
         onClick={onOpen}
         aria-label={`Kantong ${name}, saldo ${formatIDR(amount)}`}
-        className="block w-full text-left transition-transform active:scale-[0.98]"
+        className="flex w-full flex-col items-center gap-1 transition-transform active:scale-[0.98]"
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-variant text-primary">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-variant text-primary">
           <Icon name={icon} className="text-[18px]" />
         </span>
-        <p className="mt-3 text-meta text-on-surface-variant">{name}</p>
+        <p className="mt-2 text-meta text-on-surface-variant">{name}</p>
         <p className="text-body font-semibold text-on-surface">{formatIDR(amount)}</p>
       </button>
-      <div className="mt-3 flex items-center gap-2">
-        <button
-          type="button"
-          onClick={stop}
-          aria-label={`Edit kantong ${name}`}
-          className="flex h-8 min-w-8 items-center justify-center gap-1 rounded-full border border-outline-variant/30 px-2 text-[11px] font-semibold text-on-surface-variant transition-transform active:scale-95"
-        >
-          <Icon name="edit" className="text-[14px]" /> Edit
-        </button>
-        <button
-          type="button"
-          onClick={stop}
-          aria-label={`Hapus kantong ${name}`}
-          className="flex h-8 min-w-8 items-center justify-center rounded-full border border-outline-variant/30 px-2 text-error transition-transform active:scale-95"
-        >
-          <Icon name="delete" className="text-[14px]" />
-        </button>
-      </div>
     </div>
   );
 });
